@@ -10,7 +10,7 @@ Summary: Pure Python Opendap/DODS client and server
 Installing pydap
 ================
 
-Installing `pydap` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+Installing `pydap` from the `terradue` channel can be achieved by adding `terradue` to your channels with:
 
 ```
 conda config --add channels terradue
