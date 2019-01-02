@@ -1,24 +1,20 @@
-*** Pydap-3.2.2.orig/src/pydap/net.py	2019-01-02 07:22:41.370681882 +0100
---- Pydap-3.2.2/src/pydap/net.py	2019-01-02 07:27:09.505699856 +0100
-***************
-*** 2,7 ****
---- 2,8 ----
-  from webob.exc import HTTPError
-  from contextlib import closing
-  import requests
-+ import urllib
-  from requests.exceptions import (MissingSchema, InvalidSchema,
-                                   Timeout)
+--- Pydap-3.2.2.orig/src/pydap/net.py	2019-01-02 07:22:41.370681882 +0100
++++ Pydap-3.2.2/src/pydap/net.py	2019-01-02 07:27:09.505699856 +0100
+@@ -2,6 +2,7 @@
+ from webob.exc import HTTPError
+ from contextlib import closing
+ import requests
++import urllib
+ from requests.exceptions import (MissingSchema, InvalidSchema,
+                                  Timeout)
 
-***************
-*** 23,28 ****
---- 24,33 ----
-          _, _, path, query, fragment = urlsplit(url)
-          url = urlunsplit(('', '', path, query, fragment))
+@@ -23,6 +24,10 @@
+         _, _, path, query, fragment = urlsplit(url)
+         url = urlunsplit(('', '', path, query, fragment))
 
-+     scheme, host, path, query, fragment = urlsplit(url)
-+     query = urllib.quote(query)
-+     url = urlunsplit((scheme, host, path, query, fragment))
++    scheme, host, path, query, fragment = urlsplit(url)
++    query = urllib.quote(query)
++    url = urlunsplit((scheme, host, path, query, fragment))
 +
-      return follow_redirect(url, application=application, session=session,
-                             timeout=timeout)
+     return follow_redirect(url, application=application, session=session,
+                            timeout=timeout)
