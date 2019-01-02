@@ -1,0 +1,96 @@
+{% set name = "pydap" %}
+{% set version = "3.2.2" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "86326642e24f421595a74b0f9986da76d7932b277768f501fe214d72592bdc40" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.tar.gz'
+  #url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+  url: https://files.pythonhosted.org/packages/1d/87/b892c0a148fa8cea9c38e95394795ded015ee0679e9d8dadb3b939b38e21/Pydap-3.2.2.tar.gz
+  patches:
+    - url_query_encode.patch
+
+build:
+  number: 0
+  entry_points:
+    - pydap=pydap.wsgi.app:main
+    - dods=pydap.handlers.dap:dump
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - webob
+    - jinja2
+    - docopt
+    - six >=1.4.0
+    - beautifulsoup4
+    - singledispatch
+  run:
+    - python
+    - setuptools
+    - numpy
+    - webob
+    - jinja2
+    - gunicorn
+    - paste
+    - pastedeploy
+    - scipy
+    - docopt
+    - requests
+    - six >=1.4.0
+    - beautifulsoup4
+    - singledispatch
+
+test:
+  imports:
+    - pydap
+    - pydap.cas
+    - pydap.handlers
+    - pydap.handlers.netcdf
+    - pydap.parsers
+    - pydap.responses
+    - pydap.responses.html
+    - pydap.server
+    - pydap.tests
+    - pydap.wsgi
+  commands:
+    - pydap --help
+
+about:
+  home: http://pydap.org/
+  license: MIT
+  license_family: MIT
+  license_file: ''
+  summary: An implementation of the Data Access Protocol.
+  description: "Pydap\n=====\n\n[![Build Status](https://travis-ci.org/pydap/pydap.svg)](https://travis-ci.org/pydap/pydap)\n[![Python2](https://img.shields.io/badge/python-2-blue.svg)](https://www.python.org/downloads/)\n\
+    [![Python3](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/downloads/)\n[![documentation](https://readthedocs.org/projects/pydap/badge/?version=latest)](http://pydap.readthedocs.org/en/latest/)\n\
+    [![PyPI](https://img.shields.io/pypi/v/pydap.svg?maxAge=2592000?style=plastic)](https://pypi.python.org/pypi/Pydap/)\n\n[Pydap](http://pydap.readthedocs.io/en/latest/) is an implementation of the Opendap/DODS\
+    \ protocol, written from scratch in pure python.  You can use Pydap to access scientific data on the internet without having to \ndownload it; instead, you work with special array and iterable objects\
+    \ that \ndownload data on-the-fly as necessary, saving bandwidth and time. The module \nalso comes with a robust-but-lightweight Opendap server, implemented as a WSGI \napplication.\n\n\nQuickstart\n\
+    ----------\n\nYou can install the latest version using [pip](http://pypi.python.org/pypi/pip). After [installing pip](http://www.pip-installer.org/en/latest/installing.html) you can install Pydap with\
+    \ this command:\n```bash\n    $ pip install Pydap\n```\nThis will install Pydap together with all the required dependencies. You can now open any remotely served dataset, and Pydap will download the\
+    \ accessed data on-the-fly as needed:\n\n```python\n\n    >>> from pydap.client import open_url\n    >>> dataset = open_url('http://test.opendap.org/dap/data/nc/coads_climatology.nc')\n    >>> var =\
+    \ dataset['SST']\n    >>> var.shape\n    (12, 90, 180)\n    >>> var.dtype\n    dtype('>f4')\n    >>> data = var[0,10:14,10:14]  # this will download data from the server\n    >>> data\n    <GridType\
+    \ with array 'SST' and maps 'TIME', 'COADSY', 'COADSX'>\n    >>> print(data.data)\n    [array([[[ -1.26285708e+00,  -9.99999979e+33,  -9.99999979e+33,\n              -9.99999979e+33],\n            [\
+    \ -7.69166648e-01,  -7.79999971e-01,  -6.75454497e-01,\n              -5.95714271e-01],\n            [  1.28333330e-01,  -5.00000156e-02,  -6.36363626e-02,\n              -1.41666666e-01],\n       \
+    \     [  6.38000011e-01,   8.95384610e-01,   7.21666634e-01,\n               8.10000002e-01]]], dtype=float32), array([ 366.]), array([-69., -67., -65., -63.]), array([ 41.,  43.,  45.,  47.])]\n```\n\
+    \nFor more information, please check the documentation on [using Pydap as a client](http://pydap.readthedocs.io/en/latest/server.html). Pydap also comes with a simple server, implemented as a [WSGI](\
+    \ http://wsgi.org/) application. To use it, you first need to install the server and optionally a data handler:\n\n```bash\n\n    $ pip install Pydap[server,handlers.netcdf]\n```\nThis will install\
+    \ support for [netCDF](http://www.unidata.ucar.edu/software/netcdf/) files; more [handlers](http://pydap.readthedocs.io/en/latest/handlers.html) for different formats are available, if necessary. Now\
+    \ create a directory for your server data.\n\n\nTo run the server just issue the command:\n\n```bash\n\n    $ pydap --data ./myserver/data/ --port 8001\n```\nThis will start a standalone server running\
+    \ on http://localhost:8001/, serving netCDF files from ``./myserver/data/``, similar to the test server at http://test.pydap.org/. Since the server uses the [WSGI](http://wsgi.org/) standard, it can\
+    \ easily be run behind Apache. The [server documentation](server.html) has more information on how to better deploy Pydap.\n\n## Documentation\nFor more information, see [![documentation](https://readthedocs.org/projects/pydap/badge/?version=latest)](http://pydap.readthedocs.org/en/latest/)\n\
+    \n## Help\n\nIf you need any help with Pydap, please feel free to send an email to the [mailing list](http://groups.google.com/group/pydap/)\n\n"
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''
