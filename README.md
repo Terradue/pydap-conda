@@ -23,7 +23,7 @@ conda install pydap -c terradue
 ```
 
 Notes
-#####
+=====
 
 This package contains a patch to fix the issue described in:
 
