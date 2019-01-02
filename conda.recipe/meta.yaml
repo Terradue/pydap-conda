@@ -1,17 +1,12 @@
-{% set name = "pydap" %}
 {% set version = "3.2.2" %}
-{% set hash_type = "sha256" %}
-{% set hash_value = "86326642e24f421595a74b0f9986da76d7932b277768f501fe214d72592bdc40" %}
 
 package:
-  name: '{{ name|lower }}'
-  version: '{{ version }}'
+  name: pydap
+  version: {{ version }}
 
 source:
-  fn: '{{ name }}-{{ version }}.tar.gz'
-  #url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  '{{ hash_type }}': '{{ hash_value }}'
-  url: https://files.pythonhosted.org/packages/1d/87/b892c0a148fa8cea9c38e95394795ded015ee0679e9d8dadb3b939b38e21/Pydap-3.2.2.tar.gz
+  url: https://pypi.io/packages/source/P/Pydap/Pydap-{{ version }}.tar.gz
+  sha256: 86326642e24f421595a74b0f9986da76d7932b277768f501fe214d72592bdc40
   patches:
     - url_query_encode.patch
 
